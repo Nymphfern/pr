@@ -1,9 +1,8 @@
-#include "ht.h"
-#include "myfile.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "ht.h"
+#include "myfile.h"
 
 #define _SIZE 10 
 
@@ -43,7 +42,7 @@ List** create_overflow(HT* table)
     return my_list;
 }
 
-HT* create_table(int size)
+HT* create_ht(int size)
 {
     HT* table = (HT*)malloc(sizeof(HT));
     table->size = size;
@@ -89,7 +88,7 @@ void free_item(ht_node* item)
     free(item);
 }
 
-void free_table(HT* table)
+void free_ht(HT* table)
 {
     // Frees the table
     for (int i = 0; i < table->size; i++)
@@ -137,7 +136,7 @@ List* list_insert(List* list, ht_node* item)
     }
 }
 
-void handle_collision(HT* table, unsigned long index, ht_node* item)
+void collisions(HT* table, unsigned long index, ht_node* item)
 {
     List* list = table->overflow[index];
 
@@ -157,7 +156,7 @@ void handle_collision(HT* table, unsigned long index, ht_node* item)
     }
 }
 
-void ht_insert(HT* table, char* key, char* value)
+void insert_ht(HT* table, char* key, char* value)
 {
     if (table == NULL)
     {
@@ -192,7 +191,7 @@ void ht_insert(HT* table, char* key, char* value)
         }
         else
         {
-            handle_collision(table, index, item);
+            collisions(table, index, item);
             return;
         }
     }
@@ -236,7 +235,7 @@ void print_search(HT* table, char* key)
     }
 }
 
-void print_table(HT* table)
+void print_ht(HT* table)
 {
     printf("\nHash Table\n-------------------\n");
     for (int i = 0; i < table->size; i++)
@@ -250,7 +249,7 @@ void print_table(HT* table)
     printf("-------------------\n\n");
 }
 
-void save_table(HT* table, char* path)
+void save_ht(HT* table, char* path)
 {
     for (int i = 0; i < table->size; i++)
     {
@@ -265,7 +264,7 @@ void save_table(HT* table, char* path)
     }
 }
 
-void ht_delete(HT* table, char* key)
+void ht_del(HT* table, char* key)
 {
     int index = hash_function(key);
     ht_node* item = table->items[index];
