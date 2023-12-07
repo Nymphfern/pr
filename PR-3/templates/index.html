@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>LinkShoter</title>
+    
+    <style>
+
+        body{
+            background-color: rgb(150, 150, 150);
+            background-size: 100%;
+        }
+
+        h1{
+            text-align: center;
+            color: #fff;
+            font-size: 56px;
+        }
+
+        form{
+            text-align: center;
+        }
+
+        .url_input{
+            color: #fff;           
+        }
+
+        .url_output{
+            color: #fff;
+            font-size: 28px;   
+        }
+
+        .btm{            
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+<body>
+    <h1>LinkShoter</h1>
+
+    <form method="post" action="/">
+        <div >
+          <label 
+            class="url_input" 
+            for="user_input">Enter your URL: </label>
+          <input
+            type="text"
+            id="user_input"
+            name="user_input"
+            size="70" 
+            required/>
+            <button class="btm" type="submit">Do it!</button>
+        </div>
+        {% if output_link %}
+            <div class="url_output" id="output_link">{{output_link}}</div>
+        {% endif %}
+    </form>
+
+</body>
+
+</html>
