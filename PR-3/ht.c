@@ -10,7 +10,7 @@ List* HEAD;
 List* TAIL;
 
 
-unsigned long hash_function(char* str)
+unsigned long hash_fun(char* str)
 {
     unsigned long i = 0;
     
@@ -165,7 +165,7 @@ void insert_ht(HT* table, char* key, char* value)
 
     ht_node* item = create_item(key, value);
 
-    int index = hash_function(key);
+    int index = hash_fun(key);
 
     ht_node* current_item = table->items[index];
 
@@ -199,7 +199,7 @@ void insert_ht(HT* table, char* key, char* value)
 
 char* ht_search(HT* table, char* key)
 {
-    int index = hash_function(key);
+    int index = hash_fun(key);
     ht_node* item = table->items[index];
     List* list = table->overflow[index];
 
@@ -266,7 +266,7 @@ void save_ht(HT* table, char* path)
 
 void ht_del(HT* table, char* key)
 {
-    int index = hash_function(key);
+    int index = hash_fun(key);
     ht_node* item = table->items[index];
     List* head = table->overflow[index];
 
