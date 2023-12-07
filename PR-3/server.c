@@ -12,21 +12,19 @@
 #include "ht.c"
 #include "myfile.c"
 
-
+#define _PATH_ "data.txt"
+#define CONST 15
+#define SIIZE 20 * 1024
 #define msg_success "SUCCESS"
+
 #define msg_error "ERROR:_INCORRECT_MESSAGE"
 #define not_found "ERROR:_NOT_FOUND"
 
-#define _PATH_ "data.txt"
-
-#define _SIZE_ 15
-#define _BUFF_SIZE_ 20 * 1024
-
 #define CLEAR_BUFF memset(buff, '\0', sizeof(buff));
 
-void dostuff (int sock, int shm);//, HT* table);
+void dostuff (int sock, int shm);
 
-void error(const char *msg) {
+void error(const char *msg) { //closed if error
     perror(msg);
     exit(EXIT_FAILURE);
 }
@@ -41,7 +39,6 @@ void printusers()
     }
 }
 
-// Функция отделения
 char* _decapitation(const char* input, char* word)
 {
     char* output = strtok(input, "#");
@@ -71,39 +68,34 @@ char* selection(char* input, int start, int len)
 }
 
 int main(int argc, char *argv[]) {
-    char buff[1024]; // Буфер для различных нужд
-    int sockfd, newsockfd; // дескрипторы сокетов
-    int portno; // номер порта
-    int pid; // id номер потока
-    socklen_t clilen; // размер адреса клиента типа socklen_t
-    struct sockaddr_in serv_addr, cli_addr; // структура сокета сервера и клиента
+    char buff[1024]; 
+    int sockfd, newsockfd; 
+    int numberport; 
+    int potokid; 
+    socklen_t clien; 
+    struct sockaddr_in serv_addr, cli_addr; 
     
-    // ошибка в случае если мы не указали порт
     if (argc < 2) {
         fprintf(stderr, "No port provided\n");
         exit(EXIT_FAILURE);
     }
     
-    // создание сокета
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) error("Opening socket");
     
-    // связывание сокета с локальным адресом
     bzero((char*) &serv_addr, sizeof(serv_addr));
-    portno = atoi(argv[1]);
+    numberport = atoi(argv[1]);
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY; // сервер принимает подключения на все IP-адреса
-    serv_addr.sin_port = htons(portno);
+    serv_addr.sin_addr.s_addr = INADDR_ANY; 
+    serv_addr.sin_port = htons(numberport);
     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
     {
         error("On binding");
     }
     
-    // ожидание подключений, размер очереди - 5
     listen(sockfd, 5);
-    clilen = sizeof(cli_addr);
+    clien = sizeof(cli_addr);
     
-    // создание общей ячейки памяти для хранения количества активных пользователей
     int shm = shm_open("/shm", O_CREAT | O_RDWR, 0660);
     if (shm == -1) 
     {
@@ -118,17 +110,15 @@ int main(int argc, char *argv[]) {
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
     memcpy(addr, &countcli, sizeof(countcli));
 
-    HT* table = create_table(_SIZE_);
+    HT* table = create_table(CONST);
 
-    // извлекаем сообщение из очереди (цикл извлечения запросов на подключение)
     while (1) {
-        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clien);
         if (newsockfd < 0) error("ERROR: on accept");
         memcpy(&countcli, addr, sizeof(countcli));
         countcli++;
         memcpy(addr, &countcli, sizeof(countcli));
 
-        // вывод сведений о клиенте
         struct hostent *hst;
         hst = gethostbyaddr((char *)&cli_addr.sin_addr, 4, AF_INET);
         printf("+%s [%s] new connect\n",
@@ -136,9 +126,9 @@ int main(int argc, char *argv[]) {
         (char*)inet_ntoa(cli_addr.sin_addr));
         printusers();
 
-        pid = fork();
-        if (pid < 0) error("On fork");
-        if (pid == 0) {
+        potokid = fork();
+        if (potokid < 0) error("On fork");
+        if (potokid == 0) {
             close(sockfd);
             dostuff(newsockfd, shm);
             exit(EXIT_SUCCESS);
@@ -153,16 +143,15 @@ int main(int argc, char *argv[]) {
 void dostuff (int sock, int shm)
 {
 
-    HT* table = create_table(_SIZE_);
-    int bytes_recv; // размер принятого сообщения
+    HT* table = create_table(CONST);
+    int bytes_recv; 
     
-    char buff[_BUFF_SIZE_];
+    char buff[SIIZE];
     
     char* addr = mmap(0, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
 
     while (1) 
     {        
-        // обработка первого параметра
         bytes_recv = read(sock, &buff[0], sizeof(buff));
         char* tmp = strdup(buff);
         if (bytes_recv < 0) error("ERROR reading from socket");
@@ -202,10 +191,11 @@ void dostuff (int sock, int shm)
 
     }
     memcpy(&countcli, addr, sizeof(countcli));
-    countcli--; // уменьшаем счетчик активных клиентов
+    countcli--;
     memcpy(addr, &countcli, sizeof(countcli));
     close(sock);
     printf("-disconnect\n");
+    
     printusers();
     return;
 }
