@@ -54,7 +54,7 @@ def home():
 
         generated_link = f"http://127.0.0.1:4658/{short_link}"  # Формируем сгенерированную короткую ссылку
 
-    return render_template('index.html', output_link=generated_link)
+    return render_template('found.html', output_link=generated_link)
 
 @app.route('/<short_link>')
 def redirect_to_original(short_link):
@@ -76,7 +76,7 @@ def redirect_to_original(short_link):
     if original_link != "NOT_FOUND":
         return redirect(original_link)        
     else:
-        return render_template('!index.html')
+        return render_template('nfound.html')
         
 
 if __name__ == '__main__':
