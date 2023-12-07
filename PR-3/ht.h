@@ -18,10 +18,10 @@ typedef struct List {
     
 } List;
 
-HT* create_table(int);
-void ht_insert(HT*, char* , char*);
+HT* create_ht(int);
+void insert_ht(HT*, char* , char*);
 void print_search(HT*, char*);
-void print_table(HT*);
-void ht_delete(HT*, char*);
-void free_table(HT*);
-void save_table(HT* table, char* path);
+void print_ht(HT*);
+void ht_del(HT*, char*);
+void free_ht(HT*);
+void save_ht(HT* table, char* path);
