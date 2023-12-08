@@ -92,31 +92,6 @@ void read_ht_file(char* path, HT* table, char* struc)
 
     fclose(mf);    
 }
-void write_to_file(char* path, char* struc, char* data)
-{
-    FILE* mf = fopen(path, "a");
-
-    if (!mf)
-    {
-        printf("Cant open the file\n");
-        
-        return;
-    }
-
-    char* result = strdup(struc);
-    
-    char* tmp = strdup(data);
-
-    fputs(result, mf);
-    
-    fputs(":", mf);
-    
-    fputs(tmp, mf);
-    
-    fputs("\n", mf);
-    
-    fclose(mf);
-}
 
 void read_set_file(char* path, SET* my_set, char* struc)
 {
@@ -150,6 +125,33 @@ void read_set_file(char* path, SET* my_set, char* struc)
 
     fclose(mf);    
 }
+void write_to_file(char* path, char* struc, char* data)
+{
+    FILE* mf = fopen(path, "a");
+
+    if (!mf)
+    {
+        printf("Cant open the file\n");
+        
+        return;
+    }
+
+    char* result = strdup(struc);
+    
+    char* tmp = strdup(data);
+
+    fputs(result, mf);
+    
+    fputs(":", mf);
+    
+    fputs(tmp, mf);
+    
+    fputs("\n", mf);
+    
+    fclose(mf);
+}
+
+
 
 
 void clear_file(char* path)
