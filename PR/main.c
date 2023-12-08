@@ -17,7 +17,7 @@ void call_dataBase(char* command, char* data, char* key)
 
 		break;
 	case 0:
-		char* path = "/home/dmitriy/NSTU_proga/PR-1/dataBase.out\0";
+		char* path = "/home/mewtwo/Downloads/PR/dataBase.out\0";
 		execl(path, command, data, key, NULL);
 		//return;
 
