@@ -7,7 +7,7 @@
 #include "myfile.c"
 
 #define _PATH_ "data.txt"
-#define SIZE_ 15
+#define _SIZE_ 15
 
 void writer(HT* table, SET* my_set)
 {
@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
 	char* data = strdup(argv[1]);
 	char* key = strdup(argv[2]);
 
-	HT* table = create_table(SIZE_);
-	SET* my_set = create_set(SIZE_);
+	HT* table = create_table(_SIZE_);
+	SET* my_set = create_set(_SIZE_);
 
 	read_file(_PATH_, "Queue");
 	read_file(_PATH_, "Stack");
